@@ -2,7 +2,7 @@ package models
 
 type Movimiento struct {
 	Id                int
-	TerceroId         int
+	TerceroId         *int
 	CuentaId          string
 	NombreCuenta      string
 	TipoMovimientoId  int
