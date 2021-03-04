@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	_ "github.com/astaxie/beego/logs"
+	"github.com/udistrital/movimientos_contables_mid/helpers"
 	_ "github.com/udistrital/movimientos_contables_mid/helpers"
 	"github.com/udistrital/movimientos_contables_mid/models"
 )
@@ -26,7 +27,7 @@ func (c *TransaccionMovimientosController) URLMapping() {
 // PostTransaccionMovimientosController ...
 // @Title PostTransaccionMovimientos
 // @Description create PostTransaccionMovimientos
-// @Param	body		body 	[]models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
+// @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
 // @Success 201			Ok
 // @Failure 400 the request contains incorrect syntax
 // @router /transaccion_movimientos [post]

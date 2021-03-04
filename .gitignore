@@ -1,0 +1,8 @@
+lastupdate.tmp
+.vscode/
+movimientos_contables_mid
+main
+.scannerwork/
+swagger/**
+!swagger/swagger.json
+!swagger/swagger.yml

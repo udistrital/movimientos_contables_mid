@@ -1,0 +1,185 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/transaccion_movimientos/transaccion_movimientos": {
+            "post": {
+                "tags": [
+                    "transaccion_movimientos"
+                ],
+                "description": "create PostTransaccionMovimientos",
+                "operationId": "TransaccionMovimientosController.PostTransaccionMovimientos",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for TransaccionMovimientos content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TransaccionMovimientos"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Ok"
+                    },
+                    "400": {
+                        "description": "the request contains incorrect syntax"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Movimiento": {
+            "title": "Movimiento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "CuentaId": {
+                    "type": "string"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreCuenta": {
+                    "type": "string"
+                },
+                "TerceroId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TipoMovimientoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TransaccionId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Valor": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        },
+        "models.Transaccion": {
+            "title": "Transaccion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "ConsecutivoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "ErrorTransaccion": {
+                    "type": "string"
+                },
+                "EstadoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Etiquetas": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "FechaTransaccion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.TransaccionMovimientos": {
+            "title": "TransaccionMovimientos",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "ConsecutivoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "ErrorTransaccion": {
+                    "type": "string"
+                },
+                "EstadoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Etiquetas": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "FechaTransaccion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Movimientos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Movimiento"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "transaccion_movimientos",
+            "description": "TransaccionMovimientosController operations for TransaccionMovimientos\n"
+        }
+    ]
+}
