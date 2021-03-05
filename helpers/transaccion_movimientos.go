@@ -106,7 +106,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 	}
 	if v.Movimientos != nil {
 		//validacion movimientos
-		for _, movimiento := range v.Movimientos {
+		for i, movimiento := range v.Movimientos {
 			// validacion de existencia de cuenta
 			nodo_cuenta_contable = models.NodoCuentaContable{}
 			//consulta de la cuenta asociada al movimiento
@@ -121,6 +121,9 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 				logs.Error(err)
 				outputError = map[string]interface{}{"funcion": "/RegistroTransaccionMovimientos6", "err": err.Error(), "status": "404"}
 				return outputError
+			}
+			if nodo_cuenta_contable.Codigo != "" {
+				v.Movimientos[i].NombreCuenta = nodo_cuenta_contable.Nombre
 			}
 			//verificacion de la presencia del tercero en el cuerpo de la peticion
 			if movimiento.TerceroId != nil {
@@ -150,7 +153,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 				}
 			}
 			//verificar que el id del tipo de movimiento coincida con la informacion registrada en parametros
-			if movimiento.TipoMovimientoId != 1 && movimiento.TipoMovimientoId != 2 { // pendiente validar el id de tipomoviento en la tabla parametro
+			if movimiento.TipoMovimientoId != 344 && movimiento.TipoMovimientoId != 345 { // pendiente validar el id de tipomoviento en la tabla parametro
 				transaccion.ErrorTransaccion += "Error: el tipo de movimiento registrado para la cuenta: " + movimiento.CuentaId + " no es valido"
 				error_valor_movimiento = true
 			} else { //id de tipo movimiento invalido
@@ -159,7 +162,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 					error_valor_movimiento = true
 				} else {
 					// tipo de movimiento = debito
-					if movimiento.TipoMovimientoId == 1 {
+					if movimiento.TipoMovimientoId == 344 {
 						valor_debito += movimiento.Valor
 					} else { //tipo de movimiento = credito
 						valor_credito += movimiento.Valor
@@ -178,10 +181,10 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 	}
 	//definicion del estado de una transaccion
 	if transaccion.ErrorTransaccion != "" {
-		transaccion.EstadoId = 2 //pendiente definir id estsado transaccion
+		transaccion.EstadoId = 343 //id de la tabla parametro (parametros crud) que relaciona una transaccion invalida
 		outputError = map[string]interface{}{"funcion": "/RegistroTransaccionMovimientos8", "err": transaccion.ErrorTransaccion, "status": "400"}
 	} else {
-		transaccion.EstadoId = 1 //pendiente definir id estsado transaccion
+		transaccion.EstadoId = 342 //id de la tabla parametro (parametros crud) que relaciona una transaccion valida
 	}
 	if err := sendJson(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion", "POST", &response, transaccion); err != nil {
 		logs.Error(err)
