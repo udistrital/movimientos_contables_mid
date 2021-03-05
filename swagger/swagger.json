@@ -45,89 +45,9 @@
         }
     },
     "definitions": {
-        "models.Movimiento": {
-            "title": "Movimiento",
-            "type": "object",
-            "properties": {
-                "Activo": {
-                    "type": "boolean"
-                },
-                "CuentaId": {
-                    "type": "string"
-                },
-                "Descripcion": {
-                    "type": "string"
-                },
-                "FechaCreacion": {
-                    "type": "string"
-                },
-                "FechaModificacion": {
-                    "type": "string"
-                },
-                "Id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "NombreCuenta": {
-                    "type": "string"
-                },
-                "TerceroId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "TipoMovimientoId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "TransaccionId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Valor": {
-                    "type": "number",
-                    "format": "double"
-                }
-            }
-        },
-        "models.Transaccion": {
-            "title": "Transaccion",
-            "type": "object",
-            "properties": {
-                "Activo": {
-                    "type": "boolean"
-                },
-                "ConsecutivoId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Descripcion": {
-                    "type": "string"
-                },
-                "ErrorTransaccion": {
-                    "type": "string"
-                },
-                "EstadoId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Etiquetas": {
-                    "type": "string"
-                },
-                "FechaCreacion": {
-                    "type": "string"
-                },
-                "FechaModificacion": {
-                    "type": "string"
-                },
-                "FechaTransaccion": {
-                    "type": "string",
-                    "format": "datetime"
-                },
-                "Id": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
+        "1731.0xc0003efd70.false": {
+            "title": "false",
+            "type": "object"
         },
         "models.TransaccionMovimientos": {
             "title": "TransaccionMovimientos",
@@ -143,34 +63,17 @@
                 "Descripcion": {
                     "type": "string"
                 },
-                "ErrorTransaccion": {
-                    "type": "string"
-                },
-                "EstadoId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
                 "Etiquetas": {
-                    "type": "string"
-                },
-                "FechaCreacion": {
-                    "type": "string"
-                },
-                "FechaModificacion": {
                     "type": "string"
                 },
                 "FechaTransaccion": {
                     "type": "string",
                     "format": "datetime"
                 },
-                "Id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Movimientos": {
+                "movimientos": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Movimiento"
+                        "$ref": "#/definitions/1731.0xc0003efd70.false"
                     }
                 }
             }

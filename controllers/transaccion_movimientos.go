@@ -47,7 +47,7 @@ func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 		}
 	}()
 
-	var v models.TransaccionMovimientos
+	var v models.TransaccionMovimientos = models.TransaccionMovimientos{}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err := helpers.RegistroTransaccionMovimientos(v); err == nil {
 			//c.Data["json"] = "OK"

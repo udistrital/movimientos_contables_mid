@@ -11,5 +11,5 @@ type Movimiento struct {
 	Activo            bool
 	FechaCreacion     string
 	FechaModificacion string
-	TransaccionId     int
+	TransaccionId     *Transaccion
 }

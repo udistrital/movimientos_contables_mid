@@ -1,7 +1,7 @@
 package models
 
 type NodoCuentaContable struct {
-	ID                  string
+	Codigo              string
 	Hijos               []string
 	Padre               *string
 	Nombre              string
