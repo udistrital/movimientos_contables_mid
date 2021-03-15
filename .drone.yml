@@ -37,7 +37,6 @@ steps:
 
 - name: check_commits
   image: jjvargass/qa_develoment:latest
-  failure: ignore
   commands:
   - python /app/check_commits.py
   when:
@@ -51,12 +50,14 @@ steps:
 - name: go_build
   image: golang:1.14
   commands:
+  - go mod init
   - go get -t
   - GOOS=linux GOARCH=amd64 go build -o main
   when:
     branch:
     - develop
     - release/*
+    - feature/*
     - master
     event:
     - push
@@ -79,6 +80,7 @@ steps:
     - develop
     - feature/*
     - release/*
+   
     event:
     - push
 
@@ -144,16 +146,16 @@ steps:
       from_secret: AWS_CONTAINER
   commands:
   - case ${DRONE_BRANCH} in
-        release/*)
-          AMBIENTE=test
-          CLUSTER=test
-          MYCONTAINER=$${AWS_CONTAINER}/${DRONE_REPO##udistrital/}:release
-          ;;
-        master)
-          AMBIENTE=prod
-          CLUSTER=oas
-          MYCONTAINER=$${AWS_CONTAINER}/${DRONE_REPO##udistrital/}:latest
-          ;;
+       release/*)
+         AMBIENTE=test
+         CLUSTER=test
+         MYCONTAINER=$${AWS_CONTAINER}/${DRONE_REPO##udistrital/}:release
+         ;;
+       master)
+         AMBIENTE=prod
+         CLUSTER=oas
+         MYCONTAINER=$${AWS_CONTAINER}/${DRONE_REPO##udistrital/}:latest
+         ;;
     esac
   - AWS_REGION=us-east-1
   - SERVICE=${DRONE_REPO##udistrital/}_$AMBIENTE
