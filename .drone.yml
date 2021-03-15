@@ -95,7 +95,7 @@ steps:
     branch:
     - develop
     - feature/*
-    #- release/*
+    - release/*
 
 - name: publish_to_ecr_release
   image: plugins/ecr
