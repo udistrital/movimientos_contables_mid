@@ -1,3 +1,4 @@
+# Dada la existencia de los go.mod/sum, este bloque se podría eliminar
 workspace:
   base: /go
   path: src/github.com/udistrital/${DRONE_REPO##udistrital/}
@@ -10,8 +11,14 @@ workspace:
 kind: pipeline
 name: oas_api_ci
 
+trigger:
+  event:
+    exclude:
+      - tag
+
 steps:
 - name: check_readme
+  failure: ignore
   image: jjvargass/qa_develoment:latest
   commands:
   - python /app/check_readme.py
@@ -24,6 +31,7 @@ steps:
     - push
 
 - name: check_branch
+  failure: ignore
   image: jjvargass/qa_develoment:latest
   commands:
   - python /app/check_branch.py -H ${DRONE_GIT_HTTP_URL}
@@ -36,6 +44,7 @@ steps:
     - push
 
 - name: check_commits
+  failure: ignore
   image: jjvargass/qa_develoment:latest
   commands:
   - python /app/check_commits.py
