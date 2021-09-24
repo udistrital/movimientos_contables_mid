@@ -45,7 +45,7 @@
         }
     },
     "definitions": {
-        "1731.0xc000438b40.false": {
+        "1731.0xc0003af500.false": {
             "title": "false",
             "type": "object"
         },
@@ -73,7 +73,7 @@
                 "movimientos": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/1731.0xc000438b40.false"
+                        "$ref": "#/definitions/1731.0xc0003af500.false"
                     }
                 }
             }

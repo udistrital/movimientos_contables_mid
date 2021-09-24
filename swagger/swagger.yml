@@ -30,7 +30,7 @@ paths:
         "400":
           description: the request contains incorrect syntax
 definitions:
-  1731.0xc000438b40.false:
+  1731.0xc0003af500.false:
     title: "false"
     type: object
   models.TransaccionMovimientos:
@@ -52,7 +52,7 @@ definitions:
       movimientos:
         type: array
         items:
-          $ref: '#/definitions/1731.0xc000438b40.false'
+          $ref: '#/definitions/1731.0xc0003af500.false'
 tags:
 - name: transaccion_movimientos
   description: |
