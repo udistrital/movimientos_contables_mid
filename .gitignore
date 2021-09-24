@@ -1,8 +1,18 @@
-lastupdate.tmp
-.vscode/
-movimientos_contables_mid
+# Binarios y temporales
+*.exe
+movimientos_contables_mid*
 main
 .scannerwork/
+*.tmp
+
+# IDEs
+.vscode
+
+# Variables de Entorno
+*.env
+!template.env
+
+# Swagger
 swagger/**
 !swagger/swagger.json
 !swagger/swagger.yml
