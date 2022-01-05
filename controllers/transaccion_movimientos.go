@@ -30,6 +30,7 @@ func (c *TransaccionMovimientosController) URLMapping() {
 // @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
 // @Success 201			Ok
 // @Failure 400 the request contains incorrect syntax
+// @Failure 500 Unhandled Error
 // @router /transaccion_movimientos [post]
 func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 	//defer helpers.GestionError(c)
@@ -42,7 +43,7 @@ func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
 			} else {
-				c.Abort("404")
+				c.Abort("500")
 			}
 		}
 	}()

@@ -29,8 +29,10 @@ paths:
           description: Ok
         "400":
           description: the request contains incorrect syntax
+        "500":
+          description: Unhandled Error
 definitions:
-  1731.0xc0003af500.false:
+  1731.0xc000398ea0.false:
     title: "false"
     type: object
   models.TransaccionMovimientos:
@@ -52,7 +54,7 @@ definitions:
       movimientos:
         type: array
         items:
-          $ref: '#/definitions/1731.0xc0003af500.false'
+          $ref: '#/definitions/1731.0xc000398ea0.false'
 tags:
 - name: transaccion_movimientos
   description: |
