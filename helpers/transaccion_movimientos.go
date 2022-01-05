@@ -78,7 +78,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 		//validacion tipo comprobante
 		if etiquetas.TipoComprobanteId != "" {
 			if response, err := getJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/tipo_comprobante/"+etiquetas.TipoComprobanteId, &respuesta_peticion); (err == nil) && (response == 200) {
-				if (respuesta_peticion["Code"].(interface{}).(float64)) == 500 {
+				if (respuesta_peticion["Code"].(float64)) == 500 {
 					transaccion.ErrorTransaccion += "Error: el Id de tipo de comprobante ingresado no se encuentra registrado \n"
 				}
 			} else {
@@ -90,7 +90,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 		//validacion comprobante
 		if etiquetas.ComprobanteId != "" {
 			if response, err := getJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/comprobante/"+etiquetas.ComprobanteId, &respuesta_peticion); (err == nil) && (response == 200) {
-				if (respuesta_peticion["Code"].(interface{}).(float64)) == 500 {
+				if (respuesta_peticion["Code"].(float64)) == 500 {
 					transaccion.ErrorTransaccion += "Error: el Id de comprobante ingresado no se encuentra registrado \n"
 				}
 			} else {
@@ -112,7 +112,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 			//consulta de la cuenta asociada al movimiento
 			if response, err := getJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/nodo_cuenta_contable/"+movimiento.CuentaId, &respuesta_peticion); (err == nil) && (response == 200) {
 				//verificacion del contenido de la consulta de la cuenta
-				if (respuesta_peticion["Body"].(interface{}).(map[string]interface{})["Codigo"]) == "" { //revisar a detalle
+				if (respuesta_peticion["Body"].(map[string]interface{})["Codigo"]) == "" { //revisar a detalle
 					transaccion.ErrorTransaccion += "Error: el Numero de cuenta ingresado: " + movimiento.CuentaId + " no se encuentra registrado \n"
 				} else { //mapeo de la respuesta en el objeto nodo_cuenta_contable
 					LimpiezaRespuestaRefactorBody(respuesta_peticion, &nodo_cuenta_contable)
@@ -192,7 +192,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 		return outputError
 	}
 	if v.Movimientos != nil {
-		if len(response["Data"].(interface{}).(map[string]interface{})) != 0 {
+		if len(response["Data"].(map[string]interface{})) != 0 {
 			LimpiezaRespuestaRefactor(response, &transaccion)
 			for _, movimiento := range v.Movimientos {
 				movimiento_envio = models.Movimiento{}
