@@ -32,7 +32,7 @@ paths:
         "500":
           description: Unhandled Error
 definitions:
-  1731.0xc000398ea0.false:
+  1731.0xc000360810.false:
     title: "false"
     type: object
   models.TransaccionMovimientos:
@@ -54,7 +54,7 @@ definitions:
       movimientos:
         type: array
         items:
-          $ref: '#/definitions/1731.0xc000398ea0.false'
+          $ref: '#/definitions/1731.0xc000360810.false'
 tags:
 - name: transaccion_movimientos
   description: |
