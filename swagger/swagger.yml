@@ -32,9 +32,27 @@ paths:
         "500":
           description: Unhandled Error
 definitions:
-  1731.0xc000360810.false:
-    title: "false"
+  models.MovimientoResumido:
+    title: MovimientoResumido
     type: object
+    properties:
+      Activo:
+        type: boolean
+      CuentaId:
+        type: string
+      Descripcion:
+        type: string
+      NombreCuenta:
+        type: string
+      TerceroId:
+        type: integer
+        format: int64
+      TipoMovimientoId:
+        type: integer
+        format: int64
+      Valor:
+        type: number
+        format: double
   models.TransaccionMovimientos:
     title: TransaccionMovimientos
     type: object
@@ -54,7 +72,7 @@ definitions:
       movimientos:
         type: array
         items:
-          $ref: '#/definitions/1731.0xc000360810.false'
+          $ref: '#/definitions/models.MovimientoResumido'
 tags:
 - name: transaccion_movimientos
   description: |
