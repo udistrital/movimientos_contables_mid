@@ -24,8 +24,8 @@ func (c *TransaccionMovimientosController) URLMapping() {
 	c.Mapping("PostTransaccionMovimientos", c.PostTransaccionMovimientos)
 }
 
-// PostTransaccionMovimientosController ...
-// @Title PostTransaccionMovimientos
+// PostTransaccionMovimientosDeprecada ...
+// @Title PostTransaccionMovimientosDeprecada
 // @Description create PostTransaccionMovimientos - DEPRECADA: Se eliminará a futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos` adicional
 // @Deprecated deprecated
 // @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
