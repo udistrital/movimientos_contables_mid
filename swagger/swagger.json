@@ -15,12 +15,43 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/transaccion_movimientos/transaccion_movimientos": {
+        "/transaccion_movimientos/": {
             "post": {
                 "tags": [
                     "transaccion_movimientos"
                 ],
                 "description": "create PostTransaccionMovimientos",
+                "operationId": "TransaccionMovimientosController.PostTransaccionMovimientos",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for TransaccionMovimientos content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TransaccionMovimientos"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Ok"
+                    },
+                    "400": {
+                        "description": "the request contains incorrect syntax"
+                    },
+                    "500": {
+                        "description": "Unhandled Error"
+                    }
+                }
+            }
+        },
+        "/transaccion_movimientos/transaccion_movimientos": {
+            "post": {
+                "tags": [
+                    "transaccion_movimientos"
+                ],
+                "description": "create PostTransaccionMovimientos - DEPRECADA: Se eliminará a futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos` adicional",
                 "operationId": "TransaccionMovimientosController.PostTransaccionMovimientos",
                 "parameters": [
                     {

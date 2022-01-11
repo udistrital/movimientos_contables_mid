@@ -26,12 +26,25 @@ func (c *TransaccionMovimientosController) URLMapping() {
 
 // PostTransaccionMovimientosController ...
 // @Title PostTransaccionMovimientos
-// @Description create PostTransaccionMovimientos
+// @Description create PostTransaccionMovimientos - DEPRECADA: Se eliminará a futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos` adicional
+// @Deprecated deprecated
 // @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
 // @Success 201			Ok
 // @Failure 400 the request contains incorrect syntax
 // @Failure 500 Unhandled Error
 // @router /transaccion_movimientos [post]
+func (c *TransaccionMovimientosController) PostTransaccionMovimientosDeprecada() {
+	c.PostTransaccionMovimientos()
+}
+
+// PostTransaccionMovimientosController ...
+// @Title PostTransaccionMovimientos
+// @Description create PostTransaccionMovimientos
+// @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
+// @Success 201			Ok
+// @Failure 400 the request contains incorrect syntax
+// @Failure 500 Unhandled Error
+// @router / [post]
 func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 	//defer helpers.GestionError(c)
 	defer func() {
