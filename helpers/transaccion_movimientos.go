@@ -47,9 +47,11 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 				transaccion.ErrorTransaccion = "Error: el consecutivo ingresado no se encuentra en la base de datos \n"
 			}
 			//consulta de una transaccion asociada al consecutivo
-			if response, err := getJsonTest(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion/?query=ConsecutivoId:"+strconv.Itoa(transaccion.ConsecutivoId), &respuesta_peticion); (err == nil) && (response == 200) {
+			if response, err := getJsonTest(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion?query=ConsecutivoId:"+strconv.Itoa(transaccion.ConsecutivoId), &respuesta_peticion); err == nil && response == 200 {
+				var data []map[string]interface{}
+				LimpiezaRespuestaRefactor(respuesta_peticion, &data)
 				//verificacion del contenido de la consulta de la transaccion
-				if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
+				if len(data) > 0 && len(data[0]) > 0 {
 					transaccion.ErrorTransaccion += "Error: el consecutivo ingresado ya tiene una transaccion asociada \n"
 				}
 			} else { //If transaccion get
