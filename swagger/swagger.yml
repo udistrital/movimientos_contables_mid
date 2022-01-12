@@ -31,13 +31,44 @@ paths:
           description: the request contains incorrect syntax
         "500":
           description: Unhandled Error
+  /transaccion_movimientos/{idType}/{id}:
+    get:
+      tags:
+      - transaccion_movimientos
+      description: Get TransaccionMovimientos
+      operationId: TransaccionMovimientosController.Get TransaccionMovimientos
+      parameters:
+      - in: path
+        name: idType
+        description: 'buscar por id de: consecutivo o transaccion'
+        required: true
+        type: string
+      - in: path
+        name: id
+        description: El ID como tal
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: detailed
+        description: Traer los movimientos asociados? `false` por defecto
+        type: boolean
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Parametros Incorrectos
+        "404":
+          description: Transaccion no encontrada
+        "500":
+          description: Error no manejado!
+        "502":
+          description: Error al contactar otra API
   /transaccion_movimientos/transaccion_movimientos:
     post:
       tags:
       - transaccion_movimientos
-      description: 'create PostTransaccionMovimientos - DEPRECADA: Se eliminará a
-        futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos`
-        adicional'
+      description: 'create PostTransaccionMovimientos - DEPRECADA: Se eliminará a futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos` adicional'
       operationId: TransaccionMovimientosController.PostTransaccionMovimientosDeprecada
       parameters:
       - in: body

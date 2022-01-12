@@ -18,6 +18,15 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:TransaccionMovimientosController"] = append(beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:TransaccionMovimientosController"],
         beego.ControllerComments{
+            Method: "Get",
+            Router: "/:idType/:id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:TransaccionMovimientosController"] = append(beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:TransaccionMovimientosController"],
+        beego.ControllerComments{
             Method: "PostTransaccionMovimientosDeprecada",
             Router: "/transaccion_movimientos",
             AllowHTTPMethods: []string{"post"},

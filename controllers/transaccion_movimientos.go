@@ -3,12 +3,17 @@ package controllers
 import (
 	"encoding/json"
 	_ "encoding/json"
+	"fmt"
 	_ "fmt"
+	"net/http"
+	"strconv"
 	_ "time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	_ "github.com/astaxie/beego/logs"
+	e "github.com/udistrital/utils_oas/errorctrl"
+
 	"github.com/udistrital/movimientos_contables_mid/helpers"
 	_ "github.com/udistrital/movimientos_contables_mid/helpers"
 	"github.com/udistrital/movimientos_contables_mid/models"
@@ -21,7 +26,7 @@ type TransaccionMovimientosController struct {
 
 //URLMapping ...
 func (c *TransaccionMovimientosController) URLMapping() {
-	c.Mapping("PostTransaccionMovimientos", c.PostTransaccionMovimientos)
+	c.Mapping("Post", c.PostTransaccionMovimientos)
 }
 
 // PostTransaccionMovimientosDeprecada ...
@@ -76,4 +81,56 @@ func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 
 	c.ServeJSON()
 
+}
+
+// Get ...
+// @Title Get TransaccionMovimientos
+// @Description Get TransaccionMovimientos
+// @Param idType   path  string true  "buscar por id de: consecutivo o transaccion"
+// @Param id       path  int    true  "El ID como tal"
+// @Param detailed query bool   false "Traer los movimientos asociados? `false` por defecto"
+// @Success 200 Ok
+// @Failure 400 Parametros Incorrectos
+// @Failure 404 Transaccion no encontrada
+// @Failure 500 Error no manejado!
+// @Failure 502 Error al contactar otra API
+// @router /:idType/:id [get]
+func (c *TransaccionMovimientosController) Get() {
+	defer e.ErrorControlController(c.Controller, "TransaccionMovimientosController")
+	const funcion string = "Get"
+
+	var (
+		detailed bool
+		idType   string
+		id       int
+		err      error
+	)
+	if idType = c.GetString(":idType"); len(idType) == 0 {
+		err := fmt.Errorf("error: Criterio no especificado")
+		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
+	}
+	if id, err = c.GetInt(":id"); err != nil || id < 0 {
+		if err == nil {
+			err = fmt.Errorf("error: El id debe ser positivo")
+		}
+		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
+	}
+	if detailed, err = c.GetBool("detailed", false); err != nil {
+		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
+	}
+
+	vars := map[string]interface{}{
+		"idType":   idType,
+		"id":       id,
+		"detailed": detailed,
+	}
+	logs.Debug(vars)
+	c.Data["json"] = vars
+	c.Ctx.Output.SetStatus(200)
+
+	// if v, err := transaccionmovimientos.Get(idType, id, detailed); err != nil {
+	// 	panic(err)
+	// } else {
+	// 	c.Data["json"] = v
+	// }
 }
