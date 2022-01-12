@@ -16,6 +16,7 @@ import (
 
 	"github.com/udistrital/movimientos_contables_mid/helpers"
 	_ "github.com/udistrital/movimientos_contables_mid/helpers"
+	"github.com/udistrital/movimientos_contables_mid/helpers/transaccionmovimientos"
 	"github.com/udistrital/movimientos_contables_mid/models"
 )
 
@@ -119,18 +120,10 @@ func (c *TransaccionMovimientosController) Get() {
 		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
 	}
 
-	vars := map[string]interface{}{
-		"idType":   idType,
-		"id":       id,
-		"detailed": detailed,
+	if v, err := transaccionmovimientos.Get(idType, id, detailed); err != nil {
+		panic(err)
+	} else {
+		c.Data["json"] = v
+		c.Ctx.Output.SetStatus(200)
 	}
-	logs.Debug(vars)
-	c.Data["json"] = vars
-	c.Ctx.Output.SetStatus(200)
-
-	// if v, err := transaccionmovimientos.Get(idType, id, detailed); err != nil {
-	// 	panic(err)
-	// } else {
-	// 	c.Data["json"] = v
-	// }
 }
