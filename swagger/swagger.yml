@@ -35,7 +35,9 @@ paths:
     post:
       tags:
       - transaccion_movimientos
-      description: 'create PostTransaccionMovimientos - DEPRECADA: Se eliminará a futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos` adicional'
+      description: 'create PostTransaccionMovimientos - DEPRECADA: Se eliminará a
+        futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos`
+        adicional'
       operationId: TransaccionMovimientosController.PostTransaccionMovimientosDeprecada
       parameters:
       - in: body
