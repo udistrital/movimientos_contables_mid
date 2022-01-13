@@ -24,13 +24,27 @@ func (c *TransaccionMovimientosController) URLMapping() {
 	c.Mapping("PostTransaccionMovimientos", c.PostTransaccionMovimientos)
 }
 
+// PostTransaccionMovimientosDeprecada ...
+// @Title PostTransaccionMovimientosDeprecada
+// @Description create PostTransaccionMovimientos - DEPRECADA: Se eliminará a futuro. Por favor usar el endpoint sencillo, sin el `transaccion_movimientos` adicional
+// @Deprecated deprecated
+// @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
+// @Success 201			Ok
+// @Failure 400 the request contains incorrect syntax
+// @Failure 500 Unhandled Error
+// @router /transaccion_movimientos [post]
+func (c *TransaccionMovimientosController) PostTransaccionMovimientosDeprecada() {
+	c.PostTransaccionMovimientos()
+}
+
 // PostTransaccionMovimientosController ...
 // @Title PostTransaccionMovimientos
 // @Description create PostTransaccionMovimientos
 // @Param	body		body 	models.TransaccionMovimientos	true		"body for TransaccionMovimientos content"
 // @Success 201			Ok
 // @Failure 400 the request contains incorrect syntax
-// @router /transaccion_movimientos [post]
+// @Failure 500 Unhandled Error
+// @router / [post]
 func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 	//defer helpers.GestionError(c)
 	defer func() {
@@ -42,7 +56,7 @@ func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
 			} else {
-				c.Abort("404")
+				c.Abort("500")
 			}
 		}
 	}()

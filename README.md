@@ -13,13 +13,21 @@ API MID para la gestión de movimientos contables dentro del sistema financiero 
 
 ### Variables de Entorno
 
-```shell
-# parámetros de api
-MOVIMIENTOS_CONTABLES_MID_HTTP_PORT=[Puerto de exposición del API]
-MOVIMIENTOS_CONTABLES_MID_RUN_MODE=[Modo de ejecución del API]
-```
+Resumidas en [la plantilla](template.env)
 
-**NOTA:** Las variables se pueden ver en el fichero conf/app.conf y están identificadas con MOVIMIENTOS_CONTABLES_MID_...
+```sh
+# Copiar
+cp template.env NOMBRE_COPIA.env
+
+# Ajustar variables según sea necesario
+# por ejemplo, con nano (puede usarse otro editor)
+nano NOMBRE_COPIA.env
+
+# Cargar variables
+source NOMBRE_COPIA.env
+# Hacer esto cada que cambie NOMBRE_COPIA.env
+# o cada que se abra nuevamente el terminal
+```
 
 ### Ejecución del Proyecto
 

@@ -13,3 +13,13 @@ type Movimiento struct {
 	FechaModificacion string
 	TransaccionId     *Transaccion
 }
+
+type MovimientoResumido struct {
+	TerceroId        *int
+	CuentaId         string
+	NombreCuenta     string
+	TipoMovimientoId int
+	Valor            float64
+	Descripcion      string
+	Activo           bool
+}
