@@ -109,7 +109,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Ok"
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.TransaccionMovimientos"
+                        }
                     },
                     "400": {
                         "description": "Parametros Incorrectos"

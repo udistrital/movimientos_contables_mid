@@ -15,7 +15,7 @@ import (
 )
 
 // GetTransaccionesByQuery retorna las transacciones buscando por query
-func GetTransaccionesByQuery(query string, transacciones []map[string]interface{}) (outputError map[string]interface{}) {
+func GetTransaccionesByQuery(query string, transacciones interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetTransaccionesByQuery"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 

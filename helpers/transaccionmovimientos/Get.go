@@ -37,7 +37,7 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	}
 
 	var transacciones []map[string]interface{}
-	if err := movimientos_contables.GetTransaccionesByQuery(query, transacciones); err != nil {
+	if err := movimientos_contables.GetTransaccionesByQuery(query, &transacciones); err != nil {
 		outputError = err
 		return
 	}

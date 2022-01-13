@@ -90,7 +90,7 @@ func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 // @Param idType   path  string true  "buscar por id de: consecutivo o transaccion"
 // @Param id       path  int    true  "El ID como tal"
 // @Param detailed query bool   false "Traer los movimientos asociados? `false` por defecto"
-// @Success 200 Ok
+// @Success 200 {object} models.TransaccionMovimientos
 // @Failure 400 Parametros Incorrectos
 // @Failure 404 Transaccion no encontrada
 // @Failure 500 Error no manejado!
@@ -126,4 +126,5 @@ func (c *TransaccionMovimientosController) Get() {
 		c.Data["json"] = v
 		c.Ctx.Output.SetStatus(200)
 	}
+	c.ServeJSON()
 }
