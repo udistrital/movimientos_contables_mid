@@ -50,6 +50,21 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 		outputError = e.Error(funcion+" - len(transacciones) > 1", err, strconv.Itoa(http.StatusConflict))
 		return
 	}
+
 	transaccion = transacciones[0]
+	if conMovimientos {
+		query := fmt.Sprintf("TransaccionId:%v", transaccion["Id"])
+		fields := []string{"Activo", "CuentaId", "Descripcion", "Id", "NombreCuenta", "TerceroId", "TipoMovimientoId", "Valor"}
+		var movimientos []map[string]interface{}
+		if err := movimientos_contables.GetMovimientos(query, fields, -1, 0, &movimientos); err != nil {
+			outputError = err
+		}
+		if len(movimientos) > 0 {
+			transaccion["movimientos"] = movimientos
+		} else {
+			transaccion["movimientos"] = []interface{}{}
+		}
+	}
+
 	return
 }
