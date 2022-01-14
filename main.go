@@ -1,12 +1,13 @@
 package main
 
 import (
-	_ "github.com/udistrital/movimientos_contables_mid/routers"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/plugins/cors"
+
 	apistatus "github.com/udistrital/utils_oas/apiStatusLib"
 	"github.com/udistrital/utils_oas/customerrorv2"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/plugins/cors"
+	_ "github.com/udistrital/movimientos_contables_mid/routers"
 )
 
 func main() {
