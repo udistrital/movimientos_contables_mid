@@ -54,7 +54,16 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	transaccion = transacciones[0]
 	if conMovimientos {
 		query := fmt.Sprintf("TransaccionId:%v", transaccion["Id"])
-		fields := []string{"Activo", "CuentaId", "Descripcion", "Id", "NombreCuenta", "TerceroId", "TipoMovimientoId", "Valor"}
+		fields := []string{
+			"Activo",
+			"CuentaId",
+			"Descripcion",
+			"Id",
+			"NombreCuenta",
+			"TerceroId",
+			"TipoMovimientoId",
+			"Valor",
+		}
 		var movimientos []map[string]interface{}
 		if err := movimientos_contables.GetMovimientos(query, fields, -1, 0, &movimientos); err != nil {
 			outputError = err
