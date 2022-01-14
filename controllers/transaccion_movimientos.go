@@ -71,7 +71,7 @@ func (c *TransaccionMovimientosController) PostTransaccionMovimientos() {
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err := helpers.RegistroTransaccionMovimientos(v); err == nil {
 			//c.Data["json"] = "OK"
-			c.Ctx.Output.SetStatus(201)
+			c.Ctx.Output.SetStatus(http.StatusCreated)
 			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "201", "Message": "Successful", "Data": "OK"}
 		} else {
 			panic(err)
@@ -107,12 +107,12 @@ func (c *TransaccionMovimientosController) Get() {
 		err      error
 	)
 	if idType = c.GetString(":idType"); len(idType) == 0 {
-		err := fmt.Errorf("error: Criterio no especificado")
+		err := fmt.Errorf("criterio no especificado")
 		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
 	}
 	if id, err = c.GetInt(":id"); err != nil || id < 0 {
 		if err == nil {
-			err = fmt.Errorf("error: El id debe ser positivo")
+			err = fmt.Errorf("el id debe ser positivo")
 		}
 		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
 	}
@@ -124,7 +124,7 @@ func (c *TransaccionMovimientosController) Get() {
 		panic(err)
 	} else {
 		c.Data["json"] = v
-		c.Ctx.Output.SetStatus(200)
+		c.Ctx.Output.SetStatus(http.StatusOK)
 	}
 	c.ServeJSON()
 }
