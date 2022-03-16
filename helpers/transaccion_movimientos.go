@@ -127,6 +127,11 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 			if nodo_cuenta_contable.Codigo != "" {
 				v.Movimientos[i].NombreCuenta = nodo_cuenta_contable.Nombre
 			}
+
+			if nodo_cuenta_contable.Hijos != nil && len(nodo_cuenta_contable.Hijos) > 0 {
+				outputError = map[string]interface{}{"funcion": "/RegistroTransaccionMovimientos6", "err": "La cuenta no es un nodo final", "status": "404"}
+				return outputError
+			}
 			//verificacion de la presencia del tercero en el cuerpo de la peticion
 			if movimiento.TerceroId != nil {
 				//comprobar si la cuenta asociada al movimiento requiere registrar un tercero
