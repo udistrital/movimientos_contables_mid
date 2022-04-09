@@ -55,3 +55,17 @@ func PostMovimiento(in interface{}, out interface{}) (outputError map[string]int
 	}
 	return
 }
+
+func GetMovimientosWorker(query string, fields []string, limit int, offset int, c chan map[string]interface{}) {
+	movimientosWorker := make(map[string]interface{})
+	var movimientos interface{}
+	outputError := GetMovimientos(query, fields, limit, offset, &movimientos)
+	fmt.Println(movimientos)
+	if outputError != nil {
+		movimientosWorker["movimientos"] = nil
+		c <- movimientosWorker
+	} else {
+		movimientosWorker["movimientos"] = movimientos
+		c <- movimientosWorker
+	}
+}
