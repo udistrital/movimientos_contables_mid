@@ -7,6 +7,7 @@ import (
 
 	e "github.com/udistrital/utils_oas/errorctrl"
 
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/movimientos_contables"
 )
 
@@ -35,24 +36,14 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	}
 
 	transaccion = transacciones[0]
-	if conMovimientos {
-		movchan := make(chan map[string]interface{})
-		query := fmt.Sprintf("TransaccionId:%v", transaccion["Id"])
-		fields := []string{
-			"Activo",
-			"CuentaId",
-			"Descripcion",
-			"Id",
-			"NombreCuenta",
-			"TerceroId",
-			"TipoMovimientoId",
-			"Valor",
-		}
-		go movimientos_contables.GetMovimientosWorker(query, fields, -1, 0, movchan)
-		tmovimientos := <-movchan
-		transaccion["Movimientos"] = tmovimientos["movimientos"]
-
-	}
+	compchan := make(chan interface{})
+	movchan := make(chan interface{})
+	etiquetaString := fmt.Sprintf("%v", transaccion["Etiquetas"])
+	transaccionId := fmt.Sprintf("%v", transaccion["Id"])
+	go cuentas_contables.GetComprobanteWorker(etiquetaString, compchan)
+	go movimientos_contables.GetMovimientosWorker(transaccionId, conMovimientos, movchan)
+	transaccion["Comprobante"] = <-compchan
+	transaccion["Movimientos"] = <-movchan
 
 	return
 }
