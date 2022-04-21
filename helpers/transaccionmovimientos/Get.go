@@ -13,7 +13,7 @@ import (
 
 func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]interface{}, outputError map[string]interface{}) {
 	const funcion string = "Get"
-
+	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 	query, err := validarCriterios(tipoDeId, id)
 	if err != nil {
 		outputError = e.Error(funcion+" - len(transacciones) == 0", err, strconv.Itoa(http.StatusNotFound))

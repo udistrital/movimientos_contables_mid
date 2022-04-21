@@ -88,6 +88,7 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 		var movimientos interface{}
 		outputError := GetMovimientos(query, fields, -1, 0, &movimientos)
 		if outputError != nil {
+			logs.Warn(outputError)
 			c <- nil
 		} else {
 			c <- movimientos

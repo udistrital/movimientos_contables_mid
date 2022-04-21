@@ -8,6 +8,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
+
 	"github.com/udistrital/movimientos_contables_mid/helpers"
 	e "github.com/udistrital/utils_oas/errorctrl"
 	r "github.com/udistrital/utils_oas/request"
@@ -39,6 +40,7 @@ func GetComprobanteWorker(etiquetaString string, c chan interface{}) {
 		var comprobante interface{}
 		outputError := GetComprobanteById(id, &comprobante)
 		if outputError != nil {
+			logs.Warn(outputError)
 			c <- nil
 		} else {
 			c <- comprobante
