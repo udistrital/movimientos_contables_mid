@@ -131,7 +131,7 @@
         }
     },
     "definitions": {
-        "2099.0xc0004c3050.false": {
+        "2131.0xc0004cd6b0.false": {
             "title": "false",
             "type": "object"
         },
@@ -173,7 +173,7 @@
                     "type": "boolean"
                 },
                 "Comprobante": {
-                    "$ref": "#/definitions/2099.0xc0004c3050.false"
+                    "$ref": "#/definitions/2131.0xc0004cd6b0.false"
                 },
                 "ConsecutivoId": {
                     "type": "integer",

@@ -12,6 +12,7 @@ type Movimiento struct {
 	FechaCreacion     string
 	FechaModificacion string
 	TransaccionId     *Transaccion
+	Cuenta            interface{}
 }
 
 type MovimientoResumido struct {

@@ -10,16 +10,18 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	e "github.com/udistrital/utils_oas/errorctrl"
+	f "github.com/udistrital/utils_oas/formatdata"
 	r "github.com/udistrital/utils_oas/request"
 
 	"github.com/udistrital/movimientos_contables_mid/helpers"
+	"github.com/udistrital/movimientos_contables_mid/models"
 )
 
 // GetMovimientos retorna las transacciones segun los criterios
-func GetMovimientos(query string, fields []string, limit int, offset int, movimientos interface{}) (outputError map[string]interface{}) {
+func GetMovimientos(query string, fields []string, limit int, offset int, m interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetMovimientos"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
-
+	var movimientos []models.Movimiento
 	var fullResponse map[string]interface{}
 	params := url.Values{}
 	params.Add("query", query)
@@ -40,6 +42,20 @@ func GetMovimientos(query string, fields []string, limit int, offset int, movimi
 	}
 
 	helpers.LimpiezaRespuestaRefactor(fullResponse, &movimientos)
+	for i, movimiento := range movimientos {
+		var respuesta_peticion map[string]interface{}
+		var cuenta interface{}
+		if _, err := r.GetJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/nodo_cuenta_contable/"+movimiento.CuentaId, &respuesta_peticion); err == nil {
+			helpers.LimpiezaRespuestaRefactorBody(respuesta_peticion, &cuenta)
+			fmt.Print(cuenta)
+		} else {
+			logs.Error(err)
+			cuenta = nil
+		}
+		movimiento.Cuenta = &cuenta
+		movimientos[i] = movimiento
+	}
+	f.FillStruct(movimientos, &m)
 	return
 }
 

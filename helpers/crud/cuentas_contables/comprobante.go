@@ -34,7 +34,7 @@ func GetComprobanteById(id string, comprobante interface{}) (outputError map[str
 
 func GetComprobanteWorker(etiquetaString string, c chan interface{}) {
 	var etiqueta map[string]string
-	if err := json.Unmarshal([]byte(etiquetaString), &etiqueta); err == nil {
+	if err := json.Unmarshal([]byte(etiquetaString), &etiqueta); err == nil && etiqueta["ComprobanteId"] != "" {
 		id := fmt.Sprintf("%v", etiqueta["ComprobanteId"])
 		var comprobante interface{}
 		outputError := GetComprobanteById(id, &comprobante)
