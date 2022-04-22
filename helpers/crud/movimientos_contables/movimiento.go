@@ -47,7 +47,6 @@ func GetMovimientos(query string, fields []string, limit int, offset int, m inte
 		var cuenta interface{}
 		if _, err := r.GetJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/nodo_cuenta_contable/"+movimiento.CuentaId, &respuesta_peticion); err == nil {
 			helpers.LimpiezaRespuestaRefactorBody(respuesta_peticion, &cuenta)
-			fmt.Print(cuenta)
 		} else {
 			logs.Error(err)
 			cuenta = nil

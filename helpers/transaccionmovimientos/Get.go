@@ -7,6 +7,7 @@ import (
 
 	e "github.com/udistrital/utils_oas/errorctrl"
 
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/consecutivos"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/movimientos_contables"
 )
@@ -38,12 +39,16 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	transaccion = transacciones[0]
 	compchan := make(chan interface{})
 	movchan := make(chan interface{})
+	conschan := make(chan interface{})
 	etiquetaString := fmt.Sprintf("%v", transaccion["Etiquetas"])
 	transaccionId := fmt.Sprintf("%v", transaccion["Id"])
+	consecutivoId := int(transaccion["ConsecutivoId"].(float64))
 	go cuentas_contables.GetComprobanteWorker(etiquetaString, compchan)
 	go movimientos_contables.GetMovimientosWorker(transaccionId, conMovimientos, movchan)
-	transaccion["Comprobante"] = <-compchan
+	go consecutivos.GetConsecutivoWorker(consecutivoId, conschan)
 	transaccion["Movimientos"] = <-movchan
+	transaccion["Comprobante"] = <-compchan
+	transaccion["Consecutivo"] = <-conschan
 
 	return
 }
