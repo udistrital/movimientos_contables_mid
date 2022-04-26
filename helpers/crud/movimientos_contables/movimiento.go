@@ -14,6 +14,8 @@ import (
 	r "github.com/udistrital/utils_oas/request"
 
 	"github.com/udistrital/movimientos_contables_mid/helpers"
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/terceros"
 	"github.com/udistrital/movimientos_contables_mid/models"
 )
 
@@ -43,15 +45,12 @@ func GetMovimientos(query string, fields []string, limit int, offset int, m inte
 
 	helpers.LimpiezaRespuestaRefactor(fullResponse, &movimientos)
 	for i, movimiento := range movimientos {
-		var respuesta_peticion map[string]interface{}
-		var cuenta interface{}
-		if _, err := r.GetJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/nodo_cuenta_contable/"+movimiento.CuentaId, &respuesta_peticion); err == nil {
-			helpers.LimpiezaRespuestaRefactorBody(respuesta_peticion, &cuenta)
-		} else {
-			logs.Error(err)
-			cuenta = nil
-		}
-		movimiento.Cuenta = &cuenta
+		nodochan := make(chan interface{})
+		terchan := make(chan interface{})
+		go cuentas_contables.GetNodoCuentaContableWorker(movimiento.CuentaId, nodochan)
+		go terceros.GetTerceroWorker(movimiento.TerceroId, terchan)
+		movimiento.Cuenta = <-nodochan
+		movimiento.Tercero = <-terchan
 		movimientos[i] = movimiento
 	}
 	f.FillStruct(movimientos, &m)

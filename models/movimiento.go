@@ -13,6 +13,7 @@ type Movimiento struct {
 	FechaModificacion string
 	TransaccionId     *Transaccion
 	Cuenta            interface{}
+	Tercero           interface{}
 }
 
 type MovimientoResumido struct {
