@@ -131,6 +131,10 @@
         }
     },
     "definitions": {
+        "2163.0xc0005226f0.false": {
+            "title": "false",
+            "type": "object"
+        },
         "models.MovimientoResumido": {
             "title": "MovimientoResumido",
             "type": "object",
@@ -167,6 +171,9 @@
             "properties": {
                 "Activo": {
                     "type": "boolean"
+                },
+                "Comprobante": {
+                    "$ref": "#/definitions/2163.0xc0005226f0.false"
                 },
                 "ConsecutivoId": {
                     "type": "integer",

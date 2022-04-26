@@ -10,16 +10,20 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	e "github.com/udistrital/utils_oas/errorctrl"
+	f "github.com/udistrital/utils_oas/formatdata"
 	r "github.com/udistrital/utils_oas/request"
 
 	"github.com/udistrital/movimientos_contables_mid/helpers"
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/terceros"
+	"github.com/udistrital/movimientos_contables_mid/models"
 )
 
 // GetMovimientos retorna las transacciones segun los criterios
-func GetMovimientos(query string, fields []string, limit int, offset int, movimientos interface{}) (outputError map[string]interface{}) {
+func GetMovimientos(query string, fields []string, limit int, offset int, m interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetMovimientos"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
-
+	var movimientos []models.Movimiento
 	var fullResponse map[string]interface{}
 	params := url.Values{}
 	params.Add("query", query)
@@ -40,6 +44,16 @@ func GetMovimientos(query string, fields []string, limit int, offset int, movimi
 	}
 
 	helpers.LimpiezaRespuestaRefactor(fullResponse, &movimientos)
+	for i, movimiento := range movimientos {
+		nodochan := make(chan interface{})
+		terchan := make(chan interface{})
+		go cuentas_contables.GetNodoCuentaContableWorker(movimiento.CuentaId, nodochan)
+		go terceros.GetTerceroWorker(movimiento.TerceroId, terchan)
+		movimiento.Cuenta = <-nodochan
+		movimiento.Tercero = <-terchan
+		movimientos[i] = movimiento
+	}
+	f.FillStruct(movimientos, &m)
 	return
 }
 
@@ -54,4 +68,31 @@ func PostMovimiento(in interface{}, out interface{}) (outputError map[string]int
 		outputError = e.Error(funcion+" - r.SendJson(url, \"POST\", &out, in)", err, status)
 	}
 	return
+}
+
+func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
+	if conMovimientos {
+		query := fmt.Sprintf("TransaccionId:%v", id)
+		fields := []string{
+			"Activo",
+			"CuentaId",
+			"Descripcion",
+			"Id",
+			"NombreCuenta",
+			"TerceroId",
+			"TipoMovimientoId",
+			"Valor",
+		}
+		var movimientos interface{}
+		outputError := GetMovimientos(query, fields, -1, 0, &movimientos)
+		if outputError != nil {
+			logs.Warn(outputError)
+			c <- nil
+		} else {
+			c <- movimientos
+		}
+	} else {
+		c <- nil
+	}
+
 }

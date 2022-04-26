@@ -89,6 +89,9 @@ paths:
         "500":
           description: Unhandled Error
 definitions:
+  2163.0xc0005226f0.false:
+    title: "false"
+    type: object
   models.MovimientoResumido:
     title: MovimientoResumido
     type: object
@@ -116,6 +119,8 @@ definitions:
     properties:
       Activo:
         type: boolean
+      Comprobante:
+        $ref: '#/definitions/2163.0xc0005226f0.false'
       ConsecutivoId:
         type: integer
         format: int64

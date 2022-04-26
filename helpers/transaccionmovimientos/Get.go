@@ -5,35 +5,20 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/astaxie/beego/logs"
 	e "github.com/udistrital/utils_oas/errorctrl"
 
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/consecutivos"
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/movimientos_contables"
 )
 
 func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]interface{}, outputError map[string]interface{}) {
 	const funcion string = "Get"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
-
-	vars := map[string]interface{}{
-		"tipoDeId":       tipoDeId,
-		"id":             id,
-		"conMovimientos": conMovimientos,
-	}
-	logs.Debug(vars)
-
-	criterios := map[string]string{
-		"consecutivo": "ConsecutivoId",
-		"transaccion": "Id",
-	}
-
-	var query string
-	if k, ok := criterios[tipoDeId]; !ok {
-		err := fmt.Errorf("criterio '%s' no valido", tipoDeId)
-		outputError = e.Error(funcion+" - criterios[tipoDeId]", err, strconv.Itoa(http.StatusBadRequest))
+	query, err := validarCriterios(tipoDeId, id)
+	if err != nil {
+		outputError = e.Error(funcion+" - len(transacciones) == 0", err, strconv.Itoa(http.StatusNotFound))
 		return
-	} else {
-		query = fmt.Sprintf("%s:%d", k, id)
 	}
 
 	var transacciones []map[string]interface{}
@@ -52,28 +37,35 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	}
 
 	transaccion = transacciones[0]
-	if conMovimientos {
-		query := fmt.Sprintf("TransaccionId:%v", transaccion["Id"])
-		fields := []string{
-			"Activo",
-			"CuentaId",
-			"Descripcion",
-			"Id",
-			"NombreCuenta",
-			"TerceroId",
-			"TipoMovimientoId",
-			"Valor",
-		}
-		var movimientos []map[string]interface{}
-		if err := movimientos_contables.GetMovimientos(query, fields, -1, 0, &movimientos); err != nil {
-			outputError = err
-		}
-		if len(movimientos) > 0 {
-			transaccion["movimientos"] = movimientos
-		} else {
-			transaccion["movimientos"] = []interface{}{}
-		}
+	compchan := make(chan interface{})
+	movchan := make(chan interface{})
+	conschan := make(chan interface{})
+	etiquetaString := fmt.Sprintf("%v", transaccion["Etiquetas"])
+	transaccionId := fmt.Sprintf("%v", transaccion["Id"])
+	consecutivoId := int(transaccion["ConsecutivoId"].(float64))
+	go cuentas_contables.GetComprobanteWorker(etiquetaString, compchan)
+	go movimientos_contables.GetMovimientosWorker(transaccionId, conMovimientos, movchan)
+	go consecutivos.GetConsecutivoWorker(consecutivoId, conschan)
+	transaccion["Movimientos"] = <-movchan
+	transaccion["Comprobante"] = <-compchan
+	transaccion["Consecutivo"] = <-conschan
+
+	return
+}
+
+func validarCriterios(tipoDeId string, id int) (query string, err error) {
+	const funcion string = "Get.validarCriterios"
+	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
+
+	criterios := map[string]string{
+		"consecutivo": "ConsecutivoId",
+		"transaccion": "Id",
 	}
 
+	if k, ok := criterios[tipoDeId]; !ok {
+		err = fmt.Errorf("criterio '%s' no valido", tipoDeId)
+	} else {
+		query = fmt.Sprintf("%s:%d", k, id)
+	}
 	return
 }

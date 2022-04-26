@@ -8,5 +8,6 @@ type TransaccionMovimientos struct {
 	Descripcion      string
 	FechaTransaccion time.Time
 	Activo           bool
-	Movimientos      []MovimientoResumido `json:"movimientos"`
+	Movimientos      []MovimientoResumido   `json:"movimientos"`
+	Comprobante      map[string]interface{} `json:"Comprobante"`
 }
