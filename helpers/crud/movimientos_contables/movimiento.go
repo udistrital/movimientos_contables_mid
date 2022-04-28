@@ -20,7 +20,7 @@ import (
 )
 
 // GetMovimientos retorna las transacciones segun los criterios
-func GetMovimientos(query string, fields []string, limit int, offset int, m interface{}) (outputError map[string]interface{}) {
+func GetMovimientos(query string, fields []string, limit int, offset int, sortby []string, order []string, m interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetMovimientos"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 	var movimientos []models.Movimiento
@@ -29,6 +29,12 @@ func GetMovimientos(query string, fields []string, limit int, offset int, m inte
 	params.Add("query", query)
 	if len(fields) > 0 {
 		params.Add("fields", strings.Join(fields, ","))
+	}
+	if len(sortby) > 0 {
+		params.Add("sortby", strings.Join(sortby, ","))
+	}
+	if len(order) > 0 {
+		params.Add("order", strings.Join(order, ","))
 	}
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
@@ -84,7 +90,7 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 			"Valor",
 		}
 		var movimientos interface{}
-		outputError := GetMovimientos(query, fields, -1, 0, &movimientos)
+		outputError := GetMovimientos(query, fields, -1, 0, nil, nil, &movimientos)
 		if outputError != nil {
 			logs.Warn(outputError)
 			c <- nil
