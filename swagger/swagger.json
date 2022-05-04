@@ -37,6 +37,12 @@
                     },
                     {
                         "in": "query",
+                        "name": "detailfields",
+                        "description": "Detailfields returned. e.g. col1,col2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
                         "name": "sortby",
                         "description": "Sorted-by fields. e.g. col1,col2 ...",
                         "type": "string"
@@ -189,7 +195,7 @@
         }
     },
     "definitions": {
-        "2163.0xc000534de0.false": {
+        "2227.0xc0004bd5f0.false": {
             "title": "false",
             "type": "object"
         },
@@ -235,7 +241,7 @@
                     "type": "boolean"
                 },
                 "Comprobante": {
-                    "$ref": "#/definitions/2163.0xc000534de0.false"
+                    "$ref": "#/definitions/2227.0xc0004bd5f0.false"
                 },
                 "ConsecutivoId": {
                     "type": "integer",

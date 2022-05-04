@@ -24,6 +24,7 @@ func (c *MovimientosController) URLMapping() {
 // @Description get Movimientos
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
+// @Param	detailfields	query	string	false	"Detailfields returned. e.g. col1,col2 ..."
 // @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
@@ -35,6 +36,7 @@ func (c *MovimientosController) GetAll() {
 	defer e.ErrorControlController(c.Controller, "MovimientosController")
 
 	var fields []string
+	var detailfields []string
 	var sortby []string
 	var order []string
 	var query string
@@ -44,6 +46,10 @@ func (c *MovimientosController) GetAll() {
 	// fields: col1,col2,entity.col3
 	if v := c.GetString("fields"); v != "" {
 		fields = strings.Split(v, ",")
+	}
+	// detailfields: col1,col2,entity.col3
+	if v := c.GetString("detailfields"); v != "" {
+		detailfields = strings.Split(v, ",")
 	}
 	// limit: 10 (default is 10)
 	if v, err := c.GetInt("limit"); err == nil {
@@ -67,7 +73,7 @@ func (c *MovimientosController) GetAll() {
 	}
 	var movimientos interface{}
 
-	err := movimientos_contables.GetMovimientos(query, fields, limit, offset, sortby, order, &movimientos)
+	err := movimientos_contables.GetMovimientos(query, fields, limit, offset, sortby, order, detailfields, &movimientos)
 	if err != nil {
 		logs.Error(err)
 		c.Data["mesaage"] = "Error service GetAll: The request contains an incorrect parameter or no record exists"

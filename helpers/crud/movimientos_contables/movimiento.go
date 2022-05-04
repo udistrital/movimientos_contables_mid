@@ -14,13 +14,14 @@ import (
 	r "github.com/udistrital/utils_oas/request"
 
 	"github.com/udistrital/movimientos_contables_mid/helpers"
+	"github.com/udistrital/movimientos_contables_mid/helpers/crud/consecutivos"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/terceros"
 	"github.com/udistrital/movimientos_contables_mid/models"
 )
 
 // GetMovimientos retorna las transacciones segun los criterios
-func GetMovimientos(query string, fields []string, limit int, offset int, sortby []string, order []string, m interface{}) (outputError map[string]interface{}) {
+func GetMovimientos(query string, fields []string, limit int, offset int, sortby []string, order []string, detailfields []string, m interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetMovimientos"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 	var movimientos []models.Movimiento
@@ -51,12 +52,7 @@ func GetMovimientos(query string, fields []string, limit int, offset int, sortby
 
 	helpers.LimpiezaRespuestaRefactor(fullResponse, &movimientos)
 	for i, movimiento := range movimientos {
-		nodochan := make(chan interface{})
-		terchan := make(chan interface{})
-		go cuentas_contables.GetNodoCuentaContableWorker(movimiento.CuentaId, nodochan)
-		go terceros.GetTerceroWorker(movimiento.TerceroId, terchan)
-		movimiento.Cuenta = <-nodochan
-		movimiento.Tercero = <-terchan
+		GetMovimientoDetalle(&movimiento, detailfields)
 		movimientos[i] = movimiento
 	}
 	f.FillStruct(movimientos, &m)
@@ -89,8 +85,12 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 			"TipoMovimientoId",
 			"Valor",
 		}
+		detailfields := []string{
+			"Cuenta",
+			"Tercero",
+		}
 		var movimientos interface{}
-		outputError := GetMovimientos(query, fields, -1, 0, nil, nil, &movimientos)
+		outputError := GetMovimientos(query, fields, -1, 0, nil, nil, detailfields, &movimientos)
 		if outputError != nil {
 			logs.Warn(outputError)
 			c <- nil
@@ -101,4 +101,52 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 		c <- nil
 	}
 
+}
+
+func GetMovimientoDetalle(movimiento *models.Movimiento, fields []string) {
+	nodochan := make(chan interface{})
+	terchan := make(chan interface{})
+	compchan := make(chan interface{})
+	conschan := make(chan interface{})
+	tercero, cuenta, consecutivo, comprobante, all := false, false, false, false, false
+	if len(fields) > 0 {
+		for _, field := range fields {
+			switch field {
+			case "Tercero":
+				tercero = true
+			case "Cuenta":
+				cuenta = true
+			case "Consecutivo":
+				consecutivo = true
+			case "Comprobante":
+				comprobante = true
+			}
+		}
+	} else {
+		all = true
+	}
+	if tercero || all {
+		go terceros.GetTerceroWorker(movimiento.TerceroId, terchan)
+	} else {
+		close(terchan)
+	}
+	if (cuenta || all) && movimiento.CuentaId != "" {
+		go cuentas_contables.GetNodoCuentaContableWorker(movimiento.CuentaId, nodochan)
+	} else {
+		close(nodochan)
+	}
+	if (consecutivo || all) && movimiento.TransaccionId != nil {
+		go consecutivos.GetConsecutivoWorker(movimiento.TransaccionId.ConsecutivoId, conschan)
+	} else {
+		close(conschan)
+	}
+	if (comprobante || all) && movimiento.TransaccionId != nil {
+		go cuentas_contables.GetComprobanteWorker(movimiento.TransaccionId.Etiquetas, compchan)
+	} else {
+		close(compchan)
+	}
+	movimiento.Cuenta = <-nodochan
+	movimiento.Tercero = <-terchan
+	movimiento.Consecutivo = <-conschan
+	movimiento.Comprobante = <-compchan
 }

@@ -14,6 +14,8 @@ type Movimiento struct {
 	TransaccionId     *Transaccion
 	Cuenta            interface{}
 	Tercero           interface{}
+	Consecutivo       interface{}
+	Comprobante       interface{}
 }
 
 type MovimientoResumido struct {
