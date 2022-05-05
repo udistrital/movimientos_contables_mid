@@ -84,6 +84,8 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 			"TerceroId",
 			"TipoMovimientoId",
 			"Valor",
+			"SaldoAnterior",
+			"NuevoSaldo",
 		}
 		detailfields := []string{
 			"Cuenta",

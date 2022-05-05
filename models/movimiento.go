@@ -12,6 +12,8 @@ type Movimiento struct {
 	FechaCreacion     string
 	FechaModificacion string
 	TransaccionId     *Transaccion
+	SaldoAnterior     float64
+	NuevoSaldo        float64
 	Cuenta            interface{}
 	Tercero           interface{}
 	Consecutivo       interface{}

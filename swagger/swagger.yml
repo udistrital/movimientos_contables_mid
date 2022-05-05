@@ -132,7 +132,7 @@ paths:
         "500":
           description: Unhandled Error
 definitions:
-  2227.0xc0004bd5f0.false:
+  2283.0xc0005c3c20.false:
     title: "false"
     type: object
   models.MovimientoResumido:
@@ -166,7 +166,7 @@ definitions:
       Activo:
         type: boolean
       Comprobante:
-        $ref: '#/definitions/2227.0xc0004bd5f0.false'
+        $ref: '#/definitions/2283.0xc0005c3c20.false'
       ConsecutivoId:
         type: integer
         format: int64
