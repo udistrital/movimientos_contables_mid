@@ -195,7 +195,7 @@
         }
     },
     "definitions": {
-        "2283.0xc0005c3c20.false": {
+        "2283.0xc0005d4cf0.false": {
             "title": "false",
             "type": "object"
         },
@@ -241,7 +241,7 @@
                     "type": "boolean"
                 },
                 "Comprobante": {
-                    "$ref": "#/definitions/2283.0xc0005c3c20.false"
+                    "$ref": "#/definitions/2283.0xc0005d4cf0.false"
                 },
                 "ConsecutivoId": {
                     "type": "integer",
