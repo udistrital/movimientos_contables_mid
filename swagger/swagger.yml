@@ -11,6 +11,49 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
+  /movimientos/:
+    get:
+      tags:
+      - movimientos
+      description: get Movimientos
+      operationId: MovimientosController.GetAll
+      parameters:
+      - in: query
+        name: query
+        description: Filter. e.g. col1:v1,col2:v2 ...
+        type: string
+      - in: query
+        name: fields
+        description: Fields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: detailfields
+        description: Detailfields returned. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: sortby
+        description: Sorted-by fields. e.g. col1,col2 ...
+        type: string
+      - in: query
+        name: order
+        description: Order corresponding to each sortby field, if single value, apply
+          to all sortby fields. e.g. desc,asc ...
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Movimientos'
+        "403":
+          description: ""
   /transaccion_movimientos/:
     post:
       tags:
@@ -89,7 +132,7 @@ paths:
         "500":
           description: Unhandled Error
 definitions:
-  2163.0xc0005226f0.false:
+  2283.0xc0005d4cf0.false:
     title: "false"
     type: object
   models.MovimientoResumido:
@@ -113,6 +156,9 @@ definitions:
       Valor:
         type: number
         format: double
+  models.Movimientos:
+    title: Movimientos
+    type: object
   models.TransaccionMovimientos:
     title: TransaccionMovimientos
     type: object
@@ -120,7 +166,7 @@ definitions:
       Activo:
         type: boolean
       Comprobante:
-        $ref: '#/definitions/2163.0xc0005226f0.false'
+        $ref: '#/definitions/2283.0xc0005d4cf0.false'
       ConsecutivoId:
         type: integer
         format: int64
@@ -139,3 +185,6 @@ tags:
 - name: transaccion_movimientos
   description: |
     TransaccionMovimientosController operations for TransaccionMovimientos
+- name: movimientos
+  description: |
+    MovimientosController operations for Movimientos
