@@ -25,6 +25,11 @@ func init() {
 				&controllers.MovimientosController{},
 			),
 		),
+		beego.NSNamespace("/cuenta_contable",
+			beego.NSInclude(
+				&controllers.CuentaContableController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
