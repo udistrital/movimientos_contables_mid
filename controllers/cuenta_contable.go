@@ -32,7 +32,7 @@ func (c *CuentaContableController) Delete() {
 		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": "OK"}
 	} else {
 		c.Ctx.Output.SetStatus(http.StatusInternalServerError)
-		c.Data["json"] = map[string]interface{}{"Fail": false, "Status": "500", "Message": "Fail", "Data": "fail"}
+		c.Data["json"] = map[string]interface{}{"Success": false, "Status": "500", "Message": "Fail", "Data": "fail"}
 	}
 	c.ServeJSON()
 
