@@ -5,6 +5,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/cuentas_contables"
+	e "github.com/udistrital/utils_oas/errorctrl"
 )
 
 // CuentaContableController operations for Cuenta_contable
@@ -25,6 +26,7 @@ func (c *CuentaContableController) URLMapping() {
 // @Failure 403 id is empty
 // @router /:id [delete]
 func (c *CuentaContableController) Delete() {
+	defer e.ErrorControlController(c.Controller, "CuentaContableController")
 
 	idStr := c.Ctx.Input.Param(":id")
 	if err := cuentas_contables.DeleteNodoCuentaContableByCuentaId(idStr); err == nil {
