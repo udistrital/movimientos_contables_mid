@@ -7,6 +7,15 @@ import (
 
 func init() {
 
+    beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:CuentaContableController"] = append(beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:CuentaContableController"],
+        beego.ControllerComments{
+            Method: "Delete",
+            Router: "/:id",
+            AllowHTTPMethods: []string{"delete"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:MovimientosController"] = append(beego.GlobalControllerRouter["github.com/udistrital/movimientos_contables_mid/controllers:MovimientosController"],
         beego.ControllerComments{
             Method: "GetAll",

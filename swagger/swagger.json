@@ -15,6 +15,32 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/cuenta_contable/{id}": {
+            "delete": {
+                "tags": [
+                    "cuenta_contable"
+                ],
+                "description": "delete the Cuenta_contable",
+                "operationId": "CuentaContableController.Delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The id you want to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} delete success!"
+                    },
+                    "403": {
+                        "description": "id is empty"
+                    }
+                }
+            }
+        },
         "/movimientos/": {
             "get": {
                 "tags": [
@@ -195,7 +221,7 @@
         }
     },
     "definitions": {
-        "2283.0xc0005d4cf0.false": {
+        "2283.0xc00057ea20.false": {
             "title": "false",
             "type": "object"
         },
@@ -241,7 +267,7 @@
                     "type": "boolean"
                 },
                 "Comprobante": {
-                    "$ref": "#/definitions/2283.0xc0005d4cf0.false"
+                    "$ref": "#/definitions/2283.0xc00057ea20.false"
                 },
                 "ConsecutivoId": {
                     "type": "integer",
@@ -274,6 +300,10 @@
         {
             "name": "movimientos",
             "description": "MovimientosController operations for Movimientos\n"
+        },
+        {
+            "name": "cuenta_contable",
+            "description": "CuentaContableController operations for Cuenta_contable\n"
         }
     ]
 }
