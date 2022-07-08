@@ -5,20 +5,32 @@ API MID para la gestión de movimientos contables dentro del sistema financiero 
 ## Especificaciones Técnicas
 
 ### Tecnologías Implementadas y Versiones
+
 * [Golang](https://github.com/udistrital/introduccion_oas/blob/master/instalacion_de_herramientas/golang.md)
 * [BeeGo](https://github.com/udistrital/introduccion_oas/blob/master/instalacion_de_herramientas/beego.md)
 * [Docker](https://docs.docker.com/engine/install/ubuntu/)
 * [Docker Compose](https://docs.docker.com/compose/)
 
 ### Variables de Entorno
-```shell
-# parámetros de api
-MOVIMIENTOS_CONTABLES_MID_HTTP_PORT=[Puerto de exposición del API]
-MOVIMIENTOS_CONTABLES_MID_RUN_MODE=[Modo de ejecución del API]
+
+Resumidas en [la plantilla](template.env)
+
+```sh
+# Copiar
+cp template.env NOMBRE_COPIA.env
+
+# Ajustar variables según sea necesario
+# por ejemplo, con nano (puede usarse otro editor)
+nano NOMBRE_COPIA.env
+
+# Cargar variables
+source NOMBRE_COPIA.env
+# Hacer esto cada que cambie NOMBRE_COPIA.env
+# o cada que se abra nuevamente el terminal
 ```
-**NOTA:** Las variables se pueden ver en el fichero conf/app.conf y están identificadas con MOVIMIENTOS_CONTABLES_MID_...
 
 ### Ejecución del Proyecto
+
 ```shell
 #1. Obtener el repositorio con Go
 go get github.com/udistrital/movimientos_contables_mid
@@ -34,11 +46,13 @@ MOVIMIENTOS_CONTABLES_MID_HTTP_PORT=8080 MOVIMIENTOS_CONTABLES_MID_SOME_VARIABLE
 ```
 
 ### Ejecución Dockerfile
+
 ```shell
 # Implementado para despliegue del Sistema de integración continua CI.
 ```
 
 ### Ejecución docker-compose
+
 ```shell
 #1. Clonar el repositorio
 git clone -b develop https://github.com/udistrital/movimientos_contables_mid
@@ -60,16 +74,18 @@ docker ps
 ```
 
 ### Ejecución Pruebas
+
 Pruebas unitarias
+
 ```shell
 # En Proceso
 ```
 
 ## Estado CI
-| Develop | Release 0.0.1 | Master |
-| -- | -- | -- |
-| [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/movimientos_contables_mid/status.svg?ref=refs/heads/develop)](https://hubci.portaloas.udistrital.edu.co/udistrital/movimientos_contables_mid) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/movimientos_contables_mid/status.svg?ref=refs/heads/release/0.0.1)](https://hubci.portaloas.udistrital.edu.co/udistrital/movimientos_contables_mid) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/movimientos_contables_mid/status.svg)](https://hubci.portaloas.udistrital.edu.co/udistrital/movimientos_contables_mid) |
 
+| Develop | Release 1.0.0 | Master |
+| -- | -- | -- |
+| [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/movimientos_contables_mid/status.svg?ref=refs/heads/develop)](https://hubci.portaloas.udistrital.edu.co/udistrital/movimientos_contables_mid) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/movimientos_contables_mid/status.svg?ref=refs/heads/release/1.0.0)](https://hubci.portaloas.udistrital.edu.co/udistrital/movimientos_contables_mid) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/movimientos_contables_mid/status.svg?ref=refs/heads/master)](https://hubci.portaloas.udistrital.edu.co/udistrital/movimientos_contables_mid) |
 
 ## Licencia
 

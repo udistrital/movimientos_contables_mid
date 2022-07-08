@@ -8,13 +8,6 @@ type TransaccionMovimientos struct {
 	Descripcion      string
 	FechaTransaccion time.Time
 	Activo           bool
-	Movimientos      []struct {
-		TerceroId        *int
-		CuentaId         string
-		NombreCuenta     string
-		TipoMovimientoId int
-		Valor            float64
-		Descripcion      string
-		Activo           bool
-	} `json:"movimientos"`
+	Movimientos      []MovimientoResumido   `json:"movimientos"`
+	Comprobante      map[string]interface{} `json:"Comprobante"`
 }

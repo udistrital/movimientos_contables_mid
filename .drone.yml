@@ -1,17 +1,14 @@
-workspace:
-  base: /go
-  path: src/github.com/udistrital/${DRONE_REPO##udistrital/}
-  when:
-      branch:
-      - develop
-      - release/*
-      - master
-
 kind: pipeline
 name: oas_api_ci
 
+trigger:
+  event:
+    exclude:
+      - tag
+
 steps:
 - name: check_readme
+  failure: ignore
   image: jjvargass/qa_develoment:latest
   commands:
   - python /app/check_readme.py
@@ -24,6 +21,7 @@ steps:
     - push
 
 - name: check_branch
+  failure: ignore
   image: jjvargass/qa_develoment:latest
   commands:
   - python /app/check_branch.py -H ${DRONE_GIT_HTTP_URL}
@@ -36,6 +34,7 @@ steps:
     - push
 
 - name: check_commits
+  failure: ignore
   image: jjvargass/qa_develoment:latest
   commands:
   - python /app/check_commits.py
@@ -47,32 +46,16 @@ steps:
     event:
     - push
 
-- name: go_build
-  image: golang:1.14
-  commands:
-  - go mod init
-  - go get -t
-  - GOOS=linux GOARCH=amd64 go build -o main
-  when:
-    branch:
-    - develop
-    - release/*
-    - feature/*
-    - master
-    event:
-    - push
-
 - name: go_run_test
   image: golang:1.14
   commands:
   - go get -t
   - go get github.com/smartystreets/goconvey/convey
-  - GO111MODULE=off go get -u gopkg.in/alecthomas/gometalinter.v1
-  - GO111MODULE=off gometalinter.v1 --install
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.41.1
   - go get github.com/axw/gocov/...
   - go get github.com/AlekSi/gocov-xml
   - go get -u github.com/jstemmer/go-junit-report
-  - GO111MODULE=off gometalinter.v1 ./... --checkstyle | tee report.xml
+  - golangci-lint run ./... | tee report.xml
   # - gocov test ./... | gocov-xml > coverage.xml
   # - go test -v ./... | go-junit-report > test.xml
   when:
@@ -80,7 +63,6 @@ steps:
     - develop
     - feature/*
     - release/*
-   
     event:
     - push
 
@@ -96,6 +78,22 @@ steps:
     - develop
     - feature/*
     - release/*
+
+- name: go_build
+  image: golang:1.14
+  commands:
+  - go get
+  - GOOS=linux GOARCH=amd64 go build -o main
+  when:
+    branch:
+    - develop
+    - dependabot/**
+    - feature/*
+    - hotfix/*
+    - master
+    - release/*
+    event:
+    - push
 
 - name: publish_to_ecr_release
   image: plugins/ecr
@@ -174,6 +172,7 @@ steps:
     - push
 
 - name: notify_telegram
+  failure: ignore
   image: appleboy/drone-telegram
   settings:
     token:

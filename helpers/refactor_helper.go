@@ -1,24 +1,15 @@
 package helpers
 
 import (
-	"encoding/json"
 	_ "fmt"
+
+	"github.com/udistrital/utils_oas/formatdata"
 )
 
 func LimpiezaRespuestaRefactor(respuesta map[string]interface{}, v interface{}) {
-
-	b, err := json.Marshal(respuesta["Data"])
-	if err != nil {
-		panic(err)
-	}
-	json.Unmarshal(b, v)
+	formatdata.FillStruct(respuesta["Data"], &v)
 }
 
 func LimpiezaRespuestaRefactorBody(respuesta map[string]interface{}, v interface{}) {
-
-	b, err := json.Marshal(respuesta["Body"])
-	if err != nil {
-		panic(err)
-	}
-	json.Unmarshal(b, v)
+	formatdata.FillStruct(respuesta["Body"], &v)
 }
