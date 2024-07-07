@@ -5,11 +5,12 @@ import (
 	_ "fmt"
 	"strconv"
 	"time"
-
+	"github.com/udistrital/utils_oas/request"
 	"github.com/astaxie/beego"
 	_ "github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/movimientos_contables_mid/models"
+	
 )
 
 func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputError map[string]interface{}) {
@@ -41,13 +42,13 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 	transaccion.ErrorTransaccion = ""
 	if transaccion.ConsecutivoId > 0 { //el consecutivo se encuentra registrado dentro del cuerpo de la peticion
 		//verificacion en la consulta del consecutivo
-		if response, err := getJsonTest(beego.AppConfig.String("ConsecutivosCrudService")+"/consecutivo/"+strconv.Itoa(transaccion.ConsecutivoId), &respuesta_peticion); (err == nil) && (response == 200 || response == 404) {
+		if response, err := request.GetJsonTest2(beego.AppConfig.String("ConsecutivosCrudService")+"/consecutivo/"+strconv.Itoa(transaccion.ConsecutivoId), &respuesta_peticion); (err == nil) && (response == 200 || response == 404) {
 			//verificacion del contenido de la consulta del consecutivo
 			if response == 404 {
 				transaccion.ErrorTransaccion = "Error: el consecutivo ingresado no se encuentra en la base de datos\n"
 			}
 			//consulta de una transaccion asociada al consecutivo
-			if response, err := getJsonTest(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion?query=ConsecutivoId:"+strconv.Itoa(transaccion.ConsecutivoId), &respuesta_peticion); err == nil && response == 200 {
+			if response, err := request.GetJsonTest2(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion?query=ConsecutivoId:"+strconv.Itoa(transaccion.ConsecutivoId), &respuesta_peticion); err == nil && response == 200 {
 				var data []map[string]interface{}
 				LimpiezaRespuestaRefactor(respuesta_peticion, &data)
 				//verificacion del contenido de la consulta de la transaccion
@@ -79,7 +80,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 		}
 		//validacion tipo comprobante
 		if etiquetas.TipoComprobanteId != "" {
-			if response, err := getJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/tipo_comprobante/"+etiquetas.TipoComprobanteId, &respuesta_peticion); (err == nil) && (response == 200) {
+			if response, err := request.GetJsonTest2(beego.AppConfig.String("CuentasContablesCrudService")+"/tipo_comprobante/"+etiquetas.TipoComprobanteId, &respuesta_peticion); (err == nil) && (response == 200) {
 				if (respuesta_peticion["Code"].(float64)) == 500 {
 					transaccion.ErrorTransaccion += "Error: el Id de tipo de comprobante ingresado no se encuentra registrado\n"
 				}
@@ -91,7 +92,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 		}
 		//validacion comprobante
 		if etiquetas.ComprobanteId != "" {
-			if response, err := getJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/comprobante/"+etiquetas.ComprobanteId, &respuesta_peticion); (err == nil) && (response == 200) {
+			if response, err := request.GetJsonTest2(beego.AppConfig.String("CuentasContablesCrudService")+"/comprobante/"+etiquetas.ComprobanteId, &respuesta_peticion); (err == nil) && (response == 200) {
 				if (respuesta_peticion["Code"].(float64)) == 500 {
 					transaccion.ErrorTransaccion += "Error: el Id de comprobante ingresado no se encuentra registrado\n"
 				}
@@ -112,7 +113,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 			// validacion de existencia de cuenta
 			nodo_cuenta_contable = models.NodoCuentaContable{}
 			//consulta de la cuenta asociada al movimiento
-			if response, err := getJsonTest(beego.AppConfig.String("CuentasContablesCrudService")+"/nodo_cuenta_contable/"+movimiento.CuentaId, &respuesta_peticion); (err == nil) && (response == 200) {
+			if response, err := request.GetJsonTest2(beego.AppConfig.String("CuentasContablesCrudService")+"/nodo_cuenta_contable/"+movimiento.CuentaId, &respuesta_peticion); (err == nil) && (response == 200) {
 				//verificacion del contenido de la consulta de la cuenta
 				if (respuesta_peticion["Body"].(map[string]interface{})["Codigo"]) == "" { //revisar a detalle
 					transaccion.ErrorTransaccion += "Error: el Numero de cuenta ingresado: " + movimiento.CuentaId + " no se encuentra registrado\n"
@@ -141,7 +142,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 					}
 				}
 				//verificar si el tercero existe
-				if response, err := getJsonTest(beego.AppConfig.String("TercerosCrudService")+"/tercero/"+strconv.Itoa(*movimiento.TerceroId), &respuesta_peticion); (err == nil) && (response == 200 || response == 404) {
+				if response, err := request.GetJsonTest2(beego.AppConfig.String("TercerosCrudService")+"/tercero/"+strconv.Itoa(*movimiento.TerceroId), &respuesta_peticion); (err == nil) && (response == 200 || response == 404) {
 					//verificacion del contenido de la consulta del tercero
 					if response == 404 { //probar funcionamiento de esta validacion
 						transaccion.ErrorTransaccion += "Error: el tercero ingresado con id: " + strconv.Itoa(*movimiento.TerceroId) +
@@ -194,7 +195,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 	} else {
 		transaccion.EstadoId = 342 //id de la tabla parametro (parametros crud) que relaciona una transaccion valida
 	}
-	if err := sendJson(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion", "POST", &response, transaccion); err != nil {
+	if err := request.SendJson(beego.AppConfig.String("MovimientosContablesCrudService")+"/transaccion", "POST", &response, transaccion); err != nil {
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/RegistroTransaccionMovimientos9", "err": err.Error(), "status": "502"}
 		return outputError
@@ -213,7 +214,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 				movimiento_envio.Activo = movimiento.Activo
 				movimiento_envio.TransaccionId = &transaccion
 
-				if err := sendJson(beego.AppConfig.String("MovimientosContablesCrudService")+"/movimiento", "POST", &response, movimiento_envio); err != nil {
+				if err := request.SendJson(beego.AppConfig.String("MovimientosContablesCrudService")+"/movimiento", "POST", &response, movimiento_envio); err != nil {
 					logs.Error(err)
 					outputError = map[string]interface{}{"funcion": "/RegistroTransaccionMovimientos10", "err": err.Error(), "status": "502"}
 					return outputError
