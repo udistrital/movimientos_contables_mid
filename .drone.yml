@@ -7,7 +7,9 @@ workspace:
 
 steps:
 - name: run_sonar_scanner
-  image: sonarsource/sonar-scanner-cli:latest
+  # SonarQube 8.4 requiere un scanner con Java 11; las imágenes latest usan
+  # Java moderno y fallan al cargar el plugin JavaScript legado del servidor.
+  image: sonarsource/sonar-scanner-cli:4.8.0
   environment:
     SONAR_HOST_URL:
       from_secret: SONAR_HOST
