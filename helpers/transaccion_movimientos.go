@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	_ "fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -11,6 +12,39 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/movimientos_contables_mid/models"
 )
+
+// truncarAMilesimas convierte un valor a su equivalente entero en milésimas.
+// La conversión se realiza desde la representación decimal del float64 para
+// evitar que errores de su representación binaria resten una milésima.
+func truncarAMilesimas(valor float64) int64 {
+	representacionDecimal := strconv.FormatFloat(valor, 'f', -1, 64)
+	partes := strings.SplitN(representacionDecimal, ".", 2)
+	parteEntera := partes[0]
+	parteDecimal := ""
+
+	if len(partes) == 2 {
+		parteDecimal = partes[1]
+	}
+	if len(parteDecimal) > 3 {
+		parteDecimal = parteDecimal[:3]
+	}
+	parteDecimal += strings.Repeat("0", 3-len(parteDecimal))
+
+	negativo := strings.HasPrefix(parteEntera, "-")
+	parteEntera = strings.TrimPrefix(parteEntera, "-")
+	milesimas, err := strconv.ParseInt(parteEntera+parteDecimal, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	if negativo {
+		return -milesimas
+	}
+	return milesimas
+}
+
+func movimientosBalanceados(valorDebito, valorCredito float64) bool {
+	return truncarAMilesimas(valorDebito) == truncarAMilesimas(valorCredito)
+}
 
 func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputError map[string]interface{}) {
 	defer func() {
@@ -184,7 +218,7 @@ func RegistroTransaccionMovimientos(v models.TransaccionMovimientos) (outputErro
 	// validacion valores del movimiento
 	if error_valor_movimiento {
 		transaccion.ErrorTransaccion += "Error: no es posible verificar las sumas iguales ya que hay errores en los valores de los movimientos\n"
-	} else if valor_debito != valor_credito { // validacion de sumas iguales
+	} else if !movimientosBalanceados(valor_debito, valor_credito) { // validacion de sumas iguales
 		transaccion.ErrorTransaccion += "Error: los movimientos no cumplen con el requerimiento de sumas iguales\n"
 	}
 	//definicion del estado de una transaccion
