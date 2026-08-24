@@ -25,7 +25,7 @@ type TransaccionMovimientosController struct {
 	beego.Controller
 }
 
-//URLMapping ...
+// URLMapping ...
 func (c *TransaccionMovimientosController) URLMapping() {
 	c.Mapping("Post", c.PostTransaccionMovimientos)
 }
