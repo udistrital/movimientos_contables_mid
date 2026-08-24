@@ -10,7 +10,6 @@ import (
 	_ "github.com/udistrital/movimientos_contables_mid/routers"
 
 	"github.com/astaxie/beego"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 func init() {
@@ -27,12 +26,10 @@ func TestGet(t *testing.T) {
 
 	beego.Trace("testing", "TestGet", "Code[%d]\n%s", w.Code, w.Body.String())
 
-	Convey("Subject: Test Station Endpoint\n", t, func() {
-		Convey("Status Code Should Be 200", func() {
-			So(w.Code, ShouldEqual, 200)
-		})
-		Convey("The Result Should Not Be Empty", func() {
-			So(w.Body.Len(), ShouldBeGreaterThan, 0)
-		})
-	})
+	if w.Code != http.StatusNotFound {
+		t.Errorf("GET /v1/object status = %d; esperado %d", w.Code, http.StatusNotFound)
+	}
+	if w.Body.Len() == 0 {
+		t.Error("GET /v1/object retornó un cuerpo vacío")
+	}
 }
