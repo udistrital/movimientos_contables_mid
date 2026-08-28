@@ -73,7 +73,7 @@ func (c *MovimientosController) GetAll() {
 	}
 	var movimientos interface{}
 
-	err := movimientos_contables.GetMovimientos(query, fields, limit, offset, sortby, order, detailfields, &movimientos)
+	err := movimientos_contables.GetMovimientos(c.Ctx.Request.Context(), query, fields, limit, offset, sortby, order, detailfields, &movimientos)
 	if err != nil {
 		logs.Error(err)
 		c.Data["mesaage"] = "Error service GetAll: The request contains an incorrect parameter or no record exists"

@@ -36,7 +36,9 @@ func main() {
 	apistatus.Init()
 	auditoria.InitMiddleware()
 	security.SetSecurityHeaders()
-	xray.Init()
+	if err := xray.InitXRay(); err != nil {
+		beego.Error(err)
+	}
 
 	beego.ErrorController(&customerrorv2.CustomErrorController{})
 	beego.Run()
