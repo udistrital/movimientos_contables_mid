@@ -6,10 +6,9 @@ workspace:
   path: src/github.com/${DRONE_REPO}
 
 steps:
+
 - name: run_sonar_scanner
-  # SonarQube 8.4 requiere un scanner con Java 11; las imágenes latest usan
-  # Java moderno y fallan al cargar el plugin JavaScript legado del servidor.
-  image: sonarsource/sonar-scanner-cli:4.8.0
+  image: sonarsource/sonar-scanner-cli:latest
   environment:
     SONAR_HOST_URL:
       from_secret: SONAR_HOST
@@ -26,7 +25,8 @@ steps:
       - hotfix/*
       - master
     event:
-      - push
+    - push
+
 
 - name: go_run_test
   image: golang:1.25
@@ -53,7 +53,26 @@ steps:
     branch:
       - feature/*
       - develop
+      - release/*- name: run_sonar_scanner
+  image: sonarsource/sonar-scanner-cli:latest
+  environment:
+    SONAR_HOST_URL:
+      from_secret: SONAR_HOST
+    SONAR_TOKEN:
+      from_secret: SONAR_TOKEN
+    SONAR_SCANNER_OPTS: "-Dsonar.working.directory=/tmp/.scannerwork"
+  commands:
+    - sonar-scanner
+  when:
+    branch:
+      - feature/*
+      - develop
       - release/*
+      - hotfix/*
+      - master
+    event:
+    - push
+
       - hotfix/*
       - master
     event:
