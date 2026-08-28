@@ -1,6 +1,7 @@
 package transaccionmovimientos
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -12,7 +13,7 @@ import (
 	"github.com/udistrital/movimientos_contables_mid/helpers/crud/movimientos_contables"
 )
 
-func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]interface{}, outputError map[string]interface{}) {
+func Get(ctx context.Context, tipoDeId string, id int, conMovimientos bool) (transaccion map[string]interface{}, outputError map[string]interface{}) {
 	const funcion string = "Get"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 	query, err := validarCriterios(tipoDeId, id)
@@ -22,7 +23,7 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	}
 
 	var transacciones []map[string]interface{}
-	if err := movimientos_contables.GetTransaccionesByQuery(query, &transacciones); err != nil {
+	if err := movimientos_contables.GetTransaccionesByQuery(ctx, query, &transacciones); err != nil {
 		outputError = err
 		return
 	}
@@ -43,9 +44,9 @@ func Get(tipoDeId string, id int, conMovimientos bool) (transaccion map[string]i
 	etiquetaString := fmt.Sprintf("%v", transaccion["Etiquetas"])
 	transaccionId := fmt.Sprintf("%v", transaccion["Id"])
 	consecutivoId := int(transaccion["ConsecutivoId"].(float64))
-	go cuentas_contables.GetComprobanteWorker(etiquetaString, compchan)
-	go movimientos_contables.GetMovimientosWorker(transaccionId, conMovimientos, movchan)
-	go consecutivos.GetConsecutivoWorker(consecutivoId, conschan)
+	go cuentas_contables.GetComprobanteWorker(ctx, etiquetaString, compchan)
+	go movimientos_contables.GetMovimientosWorker(ctx, transaccionId, conMovimientos, movchan)
+	go consecutivos.GetConsecutivoWorker(ctx, consecutivoId, conschan)
 	transaccion["Movimientos"] = <-movchan
 	transaccion["Comprobante"] = <-compchan
 	transaccion["Consecutivo"] = <-conschan

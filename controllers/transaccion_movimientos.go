@@ -120,7 +120,7 @@ func (c *TransaccionMovimientosController) Get() {
 		panic(e.Error(funcion, err, strconv.Itoa(http.StatusBadRequest)))
 	}
 
-	if v, err := transaccionmovimientos.Get(idType, id, detailed); err != nil {
+	if v, err := transaccionmovimientos.Get(c.Ctx.Request.Context(), idType, id, detailed); err != nil {
 		panic(err)
 	} else {
 		c.Data["json"] = v
