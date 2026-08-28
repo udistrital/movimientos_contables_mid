@@ -1,7 +1,7 @@
 package terceros
 
 import (
-	"fmt"
+	"context"
 	"net/http"
 	"strconv"
 
@@ -11,26 +11,24 @@ import (
 	r "github.com/udistrital/utils_oas/request"
 )
 
-func GetTerceroById(terceroId string, tercero interface{}) (outputError map[string]interface{}) {
+func GetTerceroById(ctx context.Context, terceroId string, tercero interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetTerceroById"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 	url := beego.AppConfig.String("TercerosCrudService") + "/tercero/" + terceroId
-	if resp, err := r.GetJsonTest(url, &tercero); err != nil || resp.StatusCode != http.StatusOK {
-		status := http.StatusBadGateway
-		if err == nil { // resp.StatusCode != http.StatusOK
-			err = fmt.Errorf("undesired status code - %s", http.StatusText(resp.StatusCode))
-			status = resp.StatusCode
+	if status, err := r.GetWithContext(ctx, url, &tercero); err != nil {
+		if status == 0 {
+			status = http.StatusBadGateway
 		}
 		logs.Error(err)
-		outputError = e.Error(funcion+" - r.GetJsonTest(url, &tercero)", err, strconv.Itoa(status))
+		outputError = e.Error(funcion+" - request.GetWithContext(ctx, url, &tercero)", err, strconv.Itoa(status))
 	}
 	return
 }
 
-func GetTerceroWorker(id *int, c chan interface{}) {
+func GetTerceroWorker(ctx context.Context, id *int, c chan interface{}) {
 	var tercero interface{}
 	if id != nil {
-		outputError := GetTerceroById(strconv.Itoa(*id), &tercero)
+		outputError := GetTerceroById(ctx, strconv.Itoa(*id), &tercero)
 		if outputError != nil {
 			logs.Warn(outputError)
 			c <- nil

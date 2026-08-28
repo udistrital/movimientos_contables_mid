@@ -1,6 +1,7 @@
 package movimientos_contables
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -21,7 +22,7 @@ import (
 )
 
 // GetMovimientos retorna las transacciones segun los criterios
-func GetMovimientos(query string, fields []string, limit int, offset int, sortby []string, order []string, detailfields []string, m interface{}) (outputError map[string]interface{}) {
+func GetMovimientos(ctx context.Context, query string, fields []string, limit int, offset int, sortby []string, order []string, detailfields []string, m interface{}) (outputError map[string]interface{}) {
 	const funcion string = "GetMovimientos"
 	defer e.ErrorControlFunction(funcion+" - Unhandled Error!", strconv.Itoa(http.StatusInternalServerError))
 	var movimientos []models.Movimiento
@@ -40,19 +41,18 @@ func GetMovimientos(query string, fields []string, limit int, offset int, sortby
 	params.Add("limit", strconv.Itoa(limit))
 	params.Add("offset", strconv.Itoa(offset))
 	url := beego.AppConfig.String("MovimientosContablesCrudService") + "/movimiento?" + params.Encode()
-	if resp, err := r.GetJsonTest(url, &fullResponse); err != nil || resp.StatusCode != http.StatusOK {
-		status := http.StatusBadGateway
-		if err == nil { // resp.StatusCode != http.StatusOK
-			err = fmt.Errorf("undesired status code - %s", http.StatusText(resp.StatusCode))
-			status = resp.StatusCode
+	if status, err := r.GetWithContext(ctx, url, &fullResponse); err != nil {
+		if status == 0 {
+			status = http.StatusBadGateway
 		}
 		logs.Error(err)
-		outputError = e.Error(funcion+" - r.GetJsonTest(url, &fullResponse)", err, strconv.Itoa(status))
+		outputError = e.Error(funcion+" - request.GetWithContext(ctx, url, &fullResponse)", err, strconv.Itoa(status))
+		return
 	}
 
 	helpers.LimpiezaRespuestaRefactor(fullResponse, &movimientos)
 	for i, movimiento := range movimientos {
-		GetMovimientoDetalle(&movimiento, detailfields)
+		GetMovimientoDetalle(ctx, &movimiento, detailfields)
 		movimientos[i] = movimiento
 	}
 	f.FillStruct(movimientos, &m)
@@ -72,7 +72,7 @@ func PostMovimiento(in interface{}, out interface{}) (outputError map[string]int
 	return
 }
 
-func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
+func GetMovimientosWorker(ctx context.Context, id string, conMovimientos bool, c chan interface{}) {
 	if conMovimientos {
 		query := fmt.Sprintf("TransaccionId:%v", id)
 		fields := []string{
@@ -92,7 +92,7 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 			"Tercero",
 		}
 		var movimientos interface{}
-		outputError := GetMovimientos(query, fields, -1, 0, nil, nil, detailfields, &movimientos)
+		outputError := GetMovimientos(ctx, query, fields, -1, 0, nil, nil, detailfields, &movimientos)
 		if outputError != nil {
 			logs.Warn(outputError)
 			c <- nil
@@ -105,7 +105,7 @@ func GetMovimientosWorker(id string, conMovimientos bool, c chan interface{}) {
 
 }
 
-func GetMovimientoDetalle(movimiento *models.Movimiento, fields []string) {
+func GetMovimientoDetalle(ctx context.Context, movimiento *models.Movimiento, fields []string) {
 	nodochan := make(chan interface{})
 	terchan := make(chan interface{})
 	compchan := make(chan interface{})
@@ -128,22 +128,22 @@ func GetMovimientoDetalle(movimiento *models.Movimiento, fields []string) {
 		all = true
 	}
 	if tercero || all {
-		go terceros.GetTerceroWorker(movimiento.TerceroId, terchan)
+		go terceros.GetTerceroWorker(ctx, movimiento.TerceroId, terchan)
 	} else {
 		close(terchan)
 	}
 	if (cuenta || all) && movimiento.CuentaId != "" {
-		go cuentas_contables.GetNodoCuentaContableWorker(movimiento.CuentaId, nodochan)
+		go cuentas_contables.GetNodoCuentaContableWorker(ctx, movimiento.CuentaId, nodochan)
 	} else {
 		close(nodochan)
 	}
 	if (consecutivo || all) && movimiento.TransaccionId != nil {
-		go consecutivos.GetConsecutivoWorker(movimiento.TransaccionId.ConsecutivoId, conschan)
+		go consecutivos.GetConsecutivoWorker(ctx, movimiento.TransaccionId.ConsecutivoId, conschan)
 	} else {
 		close(conschan)
 	}
 	if (comprobante || all) && movimiento.TransaccionId != nil {
-		go cuentas_contables.GetComprobanteWorker(movimiento.TransaccionId.Etiquetas, compchan)
+		go cuentas_contables.GetComprobanteWorker(ctx, movimiento.TransaccionId.Etiquetas, compchan)
 	} else {
 		close(compchan)
 	}
